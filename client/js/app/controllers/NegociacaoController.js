@@ -7,12 +7,11 @@ class NegociacaoController{
         this._data = $("#data");
         this._quantidade = $("#quantidade");
         this._valor = $("#valor");
-        this._listanegociacoes = new ListaNegociacoes(this,function(model) {
-            /*é preciso colocar this, pois caso contrário, o this somente
-             aqui dentro referencia a listanegociações e nao da para pegar a negociacoesView*/
-             this._negociacoesView.update(model);
-            console.log(this);
-        });
+        /*Somente desta maneira ja funciona, usando arrow function
+        pois o escopo do this em uma arrow function é léxico, portanto ele 
+        não é dinâmico igual o escopo de uma função, ele não muda.
+        Portanto o this neste arrow function segue sendo NegociacaoController*/
+        this._listanegociacoes = new ListaNegociacoes(model => this._negociacoesView.update);
         this._negociacoesView = new NegociacoesView($('#negociacoesView'));
         this._negociacoesView.update(this._listanegociacoes);
         this._mensagem = new Mensagem();

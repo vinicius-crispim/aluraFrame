@@ -1,16 +1,13 @@
 class ListaNegociacoes{
     //autoUpdate serve para que o dev não precise lembrar de chamar o update toda vez que a lista mudar
-    //é preciso passar o contexto que a função será executada
-    constructor(context,autoUpdate){
+    constructor(autoUpdate){
         this._negociacoes = [];
         this._autoUpdate = autoUpdate;
-        this._context = context;
     }
 
     adiciona(negociacao){
         this._negociacoes.push(negociacao);
-        //Basicamente troca o this da função por este que eu passei
-        Reflect.apply(this._autoUpdate,this._context,[this] );
+        this._autoUpdate(this); 
     }
 
     get negociacoes(){
@@ -21,6 +18,6 @@ class ListaNegociacoes{
 
     esvazia(){
         this._negociacoes = [];
-        Reflect.apply(this._context,this._autoUpdate,this);
+        this._autoUpdate(this);
     }
 }
