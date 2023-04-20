@@ -11,11 +11,15 @@ class NegociacaoController{
         pois o escopo do this em uma arrow function é léxico, portanto ele 
         não é dinâmico igual o escopo de uma função, ele não muda.
         Portanto o this neste arrow function segue sendo NegociacaoController*/
-        this._listanegociacoes = new ListaNegociacoes(model => this._negociacoesView.update);
+        let self = this;
+        this._listanegociacoes = new ListaNegociacoes(model => self._negociacoesView.update);
+
         this._negociacoesView = new NegociacoesView($('#negociacoesView'));
         this._negociacoesView.update(this._listanegociacoes);
+
         this._mensagem = new Mensagem();
         this._mensagemView = new MensagemView($('#mensagemView'));
+
         this._mensagemView.update(this._mensagem);
     }
 
