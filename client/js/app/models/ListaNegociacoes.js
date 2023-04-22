@@ -1,13 +1,12 @@
 class ListaNegociacoes{
     //autoUpdate serve para que o dev não precise lembrar de chamar o update toda vez que a lista mudar
-    constructor(autoUpdate){
+    constructor(){
         this._negociacoes = [];
-        this._autoUpdate = autoUpdate;
     }
 
     adiciona(negociacao){
+        
         this._negociacoes.push(negociacao);
-        this._autoUpdate(this); 
     }
 
     get negociacoes(){
@@ -18,6 +17,5 @@ class ListaNegociacoes{
 
     esvazia(){
         this._negociacoes = [];
-        this._autoUpdate(this);
     }
 }
