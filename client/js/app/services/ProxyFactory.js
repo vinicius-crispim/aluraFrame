@@ -1,28 +1,31 @@
 class ProxyFactory {
     static createProxy(obj, props, acao) {
-       return new Proxy(obj, {
+        return new Proxy(obj, {
             get(target, prop, receiver) {
-
                 if (props.includes(prop) && ProxyFactory._isFunc(target[prop])) {
-                    return function () {
-                        Reflect.apply(target[prop], target, arguments);
-                        return acao(target);
 
+                    return function () {
+
+                        console.log(`interceptando ${prop}`);
+                        let retorno = Reflect.apply(target[prop], target, arguments);
+                        acao(target);
+                        return retorno;
                     }
                 }
                 return Reflect.get(target, prop, receiver);
             },
+ 
             set(target, prop, value, receiver) {
-                if(props.includes(prop)) {
-                    target[prop] = value;
+
+                let retorno = Reflect.set(target, prop, value, receiver);
+                if (props.includes(prop)) {
                     acao(target);
                 }
-            
-                return Reflect.set(target, prop, value, receiver);
+                return retorno;
             }
         });
     }
-    static _isFunc(fun){
+    static _isFunc(fun) {
         return typeof (fun) == typeof (Function);
     }
 }

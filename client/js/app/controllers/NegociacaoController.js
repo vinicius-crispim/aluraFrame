@@ -15,19 +15,15 @@ class NegociacaoController {
        
        /*Pede para o ProxyFactory criar um proxy com a instância ListaNegociacoes
        e quando o adiciona ou esvazia forem chamados, executa o negociacoesView update*/
-       this._listanegociacoes = ProxyFactory.createProxy(new ListaNegociacoes(),
-        ['adiciona', 'esvazia'],
-        model=>
-            this._negociacoesView.update(model))
-        this._negociacoesView = new NegociacoesView($('#negociacoesView'));
-        this._negociacoesView.update(this._listanegociacoes);
 
-        this._mensagem = ProxyFactory.createProxy(
-            new Mensagem(), ['texto'], model =>
-                this._mensagemView.update(model));
-        this._mensagemView = new MensagemView($('#mensagemView'));  
+       //Isto faz um data bind, uma associação entre o modelo e a view, toda vez que modelo muda, dispara a view, data bind unidirecional
 
-        this._mensagemView.update(this._mensagem);
+       this._listanegociacoes = new Bind (
+        new ListaNegociacoes(),
+        new NegociacoesView($('#negociacoesView')),
+        'adiciona', 'esvazia');       
+       
+        this._mensagem = new Bind(new Mensagem(),new MensagemView($('#mensagemView')),'texto');
 
     }
 
@@ -54,6 +50,22 @@ class NegociacaoController {
         this._listanegociacoes.esvazia();
 
         this._mensagem.texto = "Negociações apagadas com sucesso!";
+     }
+
+     importarNegociacoes(){
+        
+        let service = new NegociacaoService();
+
+        service.obterNegociacoesSemana((error,negociacoes)=>{
+            if(error){
+                this._mensagem.texto = error;
+                return;
+            }
+
+            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+            this._mensagem.texto = 'Negociações importadas com sucesso!';
+        });
+
      }
 
     _limpaFormulario() {
