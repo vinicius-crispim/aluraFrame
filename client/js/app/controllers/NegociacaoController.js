@@ -56,7 +56,29 @@ class NegociacaoController {
         
         let service = new NegociacaoService();
 
+        //Como as requisições são assincronas, elas não fazem na ordem
+
         service.obterNegociacoesSemana((error,negociacoes)=>{
+            if(error){
+                this._mensagem.texto = error;
+                return;
+            }
+
+            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+            this._mensagem.texto = 'Negociações importadas com sucesso!';
+        });
+
+        service.obterNegociacoesSemanaAnterior((error,negociacoes)=>{
+            if(error){
+                this._mensagem.texto = error;
+                return;
+            }
+
+            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+            this._mensagem.texto = 'Negociações importadas com sucesso!';
+        });
+
+        service.obterNegociacoesSemanaRetrasada((error,negociacoes)=>{
             if(error){
                 this._mensagem.texto = error;
                 return;
