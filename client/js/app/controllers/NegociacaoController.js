@@ -11,19 +11,19 @@ class NegociacaoController {
         pois o escopo do this em uma arrow function é léxico, portanto ele 
         não é dinâmico igual o escopo de uma função, ele não muda.
         Portanto o this neste arrow function segue sendo NegociacaoController*/
-       //Utilizando proxy para não "sujar" o model 
-       
-       /*Pede para o ProxyFactory criar um proxy com a instância ListaNegociacoes
-       e quando o adiciona ou esvazia forem chamados, executa o negociacoesView update*/
+        //Utilizando proxy para não "sujar" o model 
 
-       //Isto faz um data bind, uma associação entre o modelo e a view, toda vez que modelo muda, dispara a view, data bind unidirecional
+        /*Pede para o ProxyFactory criar um proxy com a instância ListaNegociacoes
+        e quando o adiciona ou esvazia forem chamados, executa o negociacoesView update*/
 
-       this._listanegociacoes = new Bind (
-        new ListaNegociacoes(),
-        new NegociacoesView($('#negociacoesView')),
-        'adiciona', 'esvazia');       
-       
-        this._mensagem = new Bind(new Mensagem(),new MensagemView($('#mensagemView')),'texto');
+        //Isto faz um data bind, uma associação entre o modelo e a view, toda vez que modelo muda, dispara a view, data bind unidirecional
+
+        this._listanegociacoes = new Bind(
+            new ListaNegociacoes(),
+            new NegociacoesView($('#negociacoesView')),
+            'adiciona', 'esvazia');
+
+        this._mensagem = new Bind(new Mensagem(), new MensagemView($('#mensagemView')), 'texto');
 
     }
 
@@ -32,7 +32,7 @@ class NegociacaoController {
         this._listanegociacoes.adiciona(this._criaNegociacao());
         this._mensagem.texto = 'Negociação adicionada com sucesso';
         this._limpaFormulario();
-        
+
     }
     /*adiciona(event) {
 
@@ -50,45 +50,55 @@ class NegociacaoController {
         this._listanegociacoes.esvazia();
 
         this._mensagem.texto = "Negociações apagadas com sucesso!";
-     }
+    }
 
-     importarNegociacoes(){
-        
+    importarNegociacoes() {
+
         let service = new NegociacaoService();
 
-        //Como as requisições são assincronas, elas não fazem na ordem
+        //Padrão de Projeto Promise
 
-        service.obterNegociacoesSemana((error,negociacoes)=>{
-            if(error){
+        //promise é o resultado futuro de uma operação
+        let promise = service.obterNegociacoesSemana();
+        //se a promessa for cumprinta, então eu recebo uma lista de negociações
+        promise.then(negociacoes => {
+            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+            this._mensagem.texto = "Negociações da Semana obtidas com sucesso";
+        }).catch(error => this._mensagem.texto = error); //se der erro retorna o erro
+        
+
+
+        /*
+        service.obterNegociacoesSemana((error, negociacoes) => {
+            if (error) {
                 this._mensagem.texto = error;
                 return;
             }
 
             negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-            this._mensagem.texto = 'Negociações importadas com sucesso!';
-        });
+            service.obterNegociacoesSemanaAnterior((error, negociacoes) => {
+                if (error) {
+                    this._mensagem.texto = error;
+                    return;
+                }
 
-        service.obterNegociacoesSemanaAnterior((error,negociacoes)=>{
-            if(error){
-                this._mensagem.texto = error;
-                return;
-            }
+                negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
 
-            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-            this._mensagem.texto = 'Negociações importadas com sucesso!';
-        });
+                service.obterNegociacoesSemanaRetrasada((error, negociacoes) => {
+                    if (error) {
+                        this._mensagem.texto = error;
+                        return;
+                    }
 
-        service.obterNegociacoesSemanaRetrasada((error,negociacoes)=>{
-            if(error){
-                this._mensagem.texto = error;
-                return;
-            }
+                    negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+                    this._mensagem.texto = 'Negociações importadas com sucesso!';
+                });
 
-            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-            this._mensagem.texto = 'Negociações importadas com sucesso!';
-        });
+            });
 
-     }
+        });*/
+
+    }
 
     _limpaFormulario() {
         this._data.value = "";
