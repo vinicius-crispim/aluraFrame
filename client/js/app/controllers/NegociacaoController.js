@@ -59,14 +59,21 @@ class NegociacaoController {
         //Padrão de Projeto Promise
 
         //promise é o resultado futuro de uma operação
-        let promise = service.obterNegociacoesSemana();
-        //se a promessa for cumprinta, então eu recebo uma lista de negociações
-        promise.then(negociacoes => {
+        service.obterNegociacoesSemana().then(negociacoes => {
+            //se a promessa for cumprinta, então eu recebo uma lista de negociações
             negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
             this._mensagem.texto = "Negociações da Semana obtidas com sucesso";
         }).catch(error => this._mensagem.texto = error); //se der erro retorna o erro
-        
 
+        service.obterNegociacoesSemanaAnterior().then(negociacoes => {
+            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+            this._mensagem.texto = "Negociações da Semana Anterior obtidas com sucesso";
+        }).catch(error => this._mensagem.texto = error);
+
+        service.obterNegociacoesSemanaRetrasada().then(negociacoes => {
+            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+            this._mensagem.texto = "Negociações da Semana Retrasada obtidas com sucesso";
+        }).catch(error => this._mensagem.texto = error);
 
         /*
         service.obterNegociacoesSemana((error, negociacoes) => {
