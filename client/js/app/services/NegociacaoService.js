@@ -11,7 +11,7 @@ class NegociacaoService {
                 .then(negociacoes => resolve(negociacoes.map(n =>
                     (new Negociacao(new Date(n.data), n.quantidade, n.valor))
                 ))).catch(error => {
-                    console.log(error);
+                    console.log(error + "semana");
                     reject("Não foi possível obter as negociações da semana");
                 });
         })
@@ -25,7 +25,7 @@ class NegociacaoService {
                 .then(negociacoes => resolve(negociacoes.map(n =>
                     (new Negociacao(new Date(n.data), n.quantidade, n.valor))
                 ))).catch(error => {
-                    console.log(error);
+                    console.log(error+ "anterior");
                     reject("Não foi possível obter as negociações da semana anterior");
                 })
 
@@ -38,10 +38,23 @@ class NegociacaoService {
             this._http.get("negociacoes/retrasada").
             then(negociacoes => resolve(negociacoes.map(n =>
                 new Negociacao(new Date(n.data), n.quantidade, n.valor)))).catch(error => {
-                console.log(error);
+                console.log(error + "RETRASADA");
                 reject("Não foi possível obter as negociações da semana retrasada");
             })
         });
+    }
+
+    obterNegociacoes() {
+        //Obtem todas as negociações diretamnete
+        return Promise.all([this.obterNegociacoesSemana(),
+             this.obterNegociacoesSemanaAnterior(),
+             this.obterNegociacoesSemanaRetrasada()
+            ]).then(periodos => 
+            periodos.reduce((dados, periodo) => dados.concat(periodo),[])
+        ).catch(erro => {
+            throw new Error(erro + "neg");
+        });
+        
     }
 
 }

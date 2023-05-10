@@ -55,39 +55,15 @@ class NegociacaoController {
     importarNegociacoes() {
 
         let service = new NegociacaoService();
-
-
-        //Padrão de Projeto Promise
-        //Promise é o resultado futuro de uma operação
-
-        //Desta forma as promises serão resolvidas em ordem
-        
-        Promise.all([service.obterNegociacoesSemana(),
-            service.obterNegociacoesSemanaAnterior(),
-            service.obterNegociacoesSemanaRetrasada()]
-        ).then(negociacoes => {
-          //Reduce para concatenar todos os arrays em um só
-          negociacoes.reduce((arrayAchatado,array) => arrayAchatado.concat(array),[])
-          .forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-          this._mensagem.texto = "Negociações Importadas com sucesso";
-        }).catch(error => this._mensagem.texto = error);
-
-        /*service.obterNegociacoesSemana().then(negociacoes => {
-            //se a promessa for cumprinta, então eu recebo uma lista de negociações
-            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-            this._mensagem.texto = "Negociações da Semana obtidas com sucesso";
-        }).catch(error => this._mensagem.texto = error); //se der erro retorna o erro
-
-        service.obterNegociacoesSemanaAnterior().then(negociacoes => {
-            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-            this._mensagem.texto = "Negociações da Semana Anterior obtidas com sucesso";
-        }).catch(error => this._mensagem.texto = error);
-
-        service.obterNegociacoesSemanaRetrasada().then(negociacoes => {
-            negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
-            this._mensagem.texto = "Negociações da Semana Retrasada obtidas com sucesso";
-        }).catch(error => this._mensagem.texto = error);*/
-    
+        service
+        .obterNegociacoes()
+        .then(negociacoes => {
+          negociacoes.forEach(negociacao => this._listanegociacoes.adiciona(negociacao));
+          this._mensagem.texto = 'Negociações do período importadas com sucesso';
+        })
+        .catch(error => {this._mensagem.texto = error + "AAAAAA"
+            console.log(error)
+        });  
     }
 
     _limpaFormulario() {
