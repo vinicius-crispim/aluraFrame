@@ -21,9 +21,11 @@ class NegociacaoController {
         this._listanegociacoes = new Bind(
             new ListaNegociacoes(),
             new NegociacoesView($('#negociacoesView')),
-            'adiciona', 'esvazia');
+            'adiciona', 'esvazia', 'ordena', 'inverteOrdem');
 
         this._mensagem = new Bind(new Mensagem(), new MensagemView($('#mensagemView')), 'texto');
+
+        this._ordemAtual = '';
 
     }
 
@@ -64,6 +66,15 @@ class NegociacaoController {
         .catch(error => {this._mensagem.texto = error + "AAAAAA"
             console.log(error)
         });  
+    }
+
+    ordena(coluna){
+        if(this._ordemAtual == coluna) {
+            this._listanegociacoes.inverteOrdem()
+        } else {
+            this._listanegociacoes.ordena((a, b) => a[coluna] - b[coluna]);
+        }
+        this._ordemAtual = coluna;
     }
 
     _limpaFormulario() {
